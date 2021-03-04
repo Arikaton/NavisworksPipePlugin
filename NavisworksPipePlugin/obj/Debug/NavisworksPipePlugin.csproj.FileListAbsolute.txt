@@ -1,0 +1,15 @@
+C:\Program Files\Autodesk\Navisworks Manage 2020\Plugins\PipePlugin\NavisworksPipePlugin.dll
+C:\Users\user\source\repos\NavisworksPipePlugin\NavisworksPipePlugin\obj\Debug\NavisworksPipePlugin.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\NavisworksPipePlugin\NavisworksPipePlugin\obj\Debug\NavisworksPipePlugin.dll
+C:\Users\user\source\repos\NavisworksPipePlugin\NavisworksPipePlugin\obj\Debug\NavisworksPipePlugin.pdb
+C:\Program Files\Autodesk\Navisworks Manage 2020\Plugins\PipePlugin\NavisworksPipePlugin.pdb
+C:\Program Files\Autodesk\Navisworks Freedom 2020\Plugins\PipePlugin\NavisworksPipePlugin.dll
+C:\Program Files\Autodesk\Navisworks Freedom 2020\Plugins\PipePlugin\NavisworksPipePlugin.pdb
+C:\Program Files\Autodesk\Navisworks Freedom 2020\Plugins\NavisworksPipePlugin\NavisworksPipePlugin.dll
+C:\Program Files\Autodesk\Navisworks Freedom 2020\Plugins\NavisworksPipePlugin\NavisworksPipePlugin.pdb
+C:\Users\user\source\repos\NavisworksPipePlugin\NavisworksPipePlugin\obj\Debug\NavisworksPipePlugin.csprojAssemblyReference.cache
+C:\Program Files\Autodesk\Navisworks Manage 2020\Plugins\NavisworksPipePlugin\NavisworksPipePlugin.dll
+C:\Program Files\Autodesk\Navisworks Manage 2020\Plugins\NavisworksPipePlugin\NavisworksPipePlugin.pdb
+C:\Users\user\source\repos\NavisworksPipePlugin\NavisworksPipePlugin\obj\Debug\NavisworksPipePlugin.csproj.GenerateResource.cache
+C:\Users\user\source\repos\NavisworksPipePlugin\NavisworksPipePlugin\obj\Debug\NavisworksPipePlugin.ParseSettingsForm.resources
+C:\Users\user\source\repos\NavisworksPipePlugin\NavisworksPipePlugin\obj\Debug\NavisworksPipePlugin.Properties.Resources.resources
