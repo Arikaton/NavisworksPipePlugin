@@ -26,5 +26,26 @@ namespace NavisworksPipePlugin
         {
             base.OverlayRender(view, graphics);
         }
+
+        /*public static void RenderSelectedPipePoints()
+        {
+            PipeInfo pipeInfo = null;
+            if (!NvwApplication.ActiveDocument.CurrentSelection.IsEmpty)
+            {
+                var box = SelectedItems.BoundingBox();
+                pipeInfo = PipeInfo.FromBoundingBox3D(box);
+            }
+
+            if (!NvwApplication.IsAutomated && pipeInfo != null)
+            {
+                PluginRecord pluginRecord = NvwApplication.Plugins.FindPlugin("NavisworksPipePlugin.Render.ABCD");
+                if (pluginRecord is RenderPluginRecord && pluginRecord.IsEnabled)
+                {
+                    SpherePlugin plugin = (SpherePlugin)(pluginRecord.LoadedPlugin ?? pluginRecord.LoadPlugin());
+                    plugin.PipeInfo = pipeInfo;
+                    NvwApplication.ActiveDocument.ActiveView.RequestDelayedRedraw(ViewRedrawRequests.OverlayRender);
+                }
+            }
+        }*/
     }
 }

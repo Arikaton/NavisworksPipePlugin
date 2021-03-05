@@ -29,11 +29,12 @@ namespace NavisworksPipePlugin
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.LabelPanel = new System.Windows.Forms.Panel();
             this.CloseButton = new System.Windows.Forms.Button();
             this.ParseLabel = new System.Windows.Forms.Label();
             this.ParseButton = new System.Windows.Forms.Button();
-            this.RenderButton = new System.Windows.Forms.Button();
+            this.OpenFileButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.CenterPointButton = new System.Windows.Forms.Button();
             this.StartEndPointButton = new System.Windows.Forms.Button();
@@ -45,6 +46,7 @@ namespace NavisworksPipePlugin
             this.label2 = new System.Windows.Forms.Label();
             this.NameBox = new System.Windows.Forms.ComboBox();
             this.FilterGroup = new System.Windows.Forms.GroupBox();
+            this.NameBoxTooltip = new System.Windows.Forms.ToolTip(this.components);
             this.LabelPanel.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -100,16 +102,16 @@ namespace NavisworksPipePlugin
             this.ParseButton.UseVisualStyleBackColor = true;
             this.ParseButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ParseButton_MouseClick);
             // 
-            // RenderButton
+            // OpenFileButton
             // 
-            this.RenderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.RenderButton.Location = new System.Drawing.Point(21, 370);
-            this.RenderButton.Name = "RenderButton";
-            this.RenderButton.Size = new System.Drawing.Size(208, 50);
-            this.RenderButton.TabIndex = 2;
-            this.RenderButton.Text = "Открыть";
-            this.RenderButton.UseVisualStyleBackColor = true;
-            this.RenderButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.RenderButton_MouseClick);
+            this.OpenFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.OpenFileButton.Location = new System.Drawing.Point(21, 370);
+            this.OpenFileButton.Name = "OpenFileButton";
+            this.OpenFileButton.Size = new System.Drawing.Size(208, 50);
+            this.OpenFileButton.TabIndex = 2;
+            this.OpenFileButton.Text = "Открыть папку";
+            this.OpenFileButton.UseVisualStyleBackColor = true;
+            this.OpenFileButton.MouseClick += new System.Windows.Forms.MouseEventHandler(this.OpenFileButton_MouseClick);
             // 
             // panel1
             // 
@@ -196,24 +198,23 @@ namespace NavisworksPipePlugin
             // 
             this.CategoriesBox.AccessibleDescription = "";
             this.CategoriesBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.CategoriesBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.CategoriesBox.FormattingEnabled = true;
             this.CategoriesBox.ImeMode = System.Windows.Forms.ImeMode.On;
             this.CategoriesBox.ItemHeight = 16;
             this.CategoriesBox.Items.AddRange(new object[] {
+            "Все",
             "Имя",
             "Тип",
             "Внутренний тип",
             "GUID",
-            "Скрытый",
-            "Обязательный",
             "Материал",
             "Файл источника"});
             this.CategoriesBox.Location = new System.Drawing.Point(9, 46);
             this.CategoriesBox.Name = "CategoriesBox";
             this.CategoriesBox.Size = new System.Drawing.Size(208, 24);
             this.CategoriesBox.TabIndex = 7;
-            this.CategoriesBox.Text = "Имя";
-            this.CategoriesBox.TextChanged += new System.EventHandler(this.CategoriesBox_TextChanged);
+            this.CategoriesBox.SelectionChangeCommitted += new System.EventHandler(this.CategoriesBox_SelectionChangeCommitted);
             // 
             // label1
             // 
@@ -238,11 +239,13 @@ namespace NavisworksPipePlugin
             // NameBox
             // 
             this.NameBox.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.NameBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.NameBox.FormattingEnabled = true;
             this.NameBox.Location = new System.Drawing.Point(349, 46);
             this.NameBox.Name = "NameBox";
             this.NameBox.Size = new System.Drawing.Size(205, 24);
             this.NameBox.TabIndex = 11;
+            this.NameBox.SelectionChangeCommitted += new System.EventHandler(this.NameBox_SelectionChangeCommitted);
             // 
             // FilterGroup
             // 
@@ -257,6 +260,12 @@ namespace NavisworksPipePlugin
             this.FilterGroup.TabStop = false;
             this.FilterGroup.Visible = false;
             // 
+            // NameBoxTooltip
+            // 
+            this.NameBoxTooltip.AutoPopDelay = 0;
+            this.NameBoxTooltip.InitialDelay = 0;
+            this.NameBoxTooltip.ReshowDelay = 0;
+            // 
             // ParseSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 16F);
@@ -266,7 +275,7 @@ namespace NavisworksPipePlugin
             this.Controls.Add(this.FilterGroup);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.RenderButton);
+            this.Controls.Add(this.OpenFileButton);
             this.Controls.Add(this.ParseButton);
             this.Controls.Add(this.LabelPanel);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -282,6 +291,7 @@ namespace NavisworksPipePlugin
             this.FilterGroup.ResumeLayout(false);
             this.FilterGroup.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         #endregion
@@ -289,7 +299,7 @@ namespace NavisworksPipePlugin
         private System.Windows.Forms.Panel LabelPanel;
         private System.Windows.Forms.Label ParseLabel;
         private System.Windows.Forms.Button ParseButton;
-        private System.Windows.Forms.Button RenderButton;
+        private System.Windows.Forms.Button OpenFileButton;
         private System.Windows.Forms.Button CloseButton;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
@@ -302,5 +312,6 @@ namespace NavisworksPipePlugin
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox NameBox;
         private System.Windows.Forms.GroupBox FilterGroup;
+        private System.Windows.Forms.ToolTip NameBoxTooltip;
     }
 }

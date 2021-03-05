@@ -57,6 +57,7 @@
       <DependentUpon>ParseSettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\PipeInfoCentered.cs" />
+    <Compile Include="ParseUtils.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -64,7 +65,7 @@
     </Compile>
     <Compile Include="SpherePlugin.cs" />
     <Compile Include="Models\PipeInfo.cs" />
-    <Compile Include="PipeParser.cs" />
+    <Compile Include="PipePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

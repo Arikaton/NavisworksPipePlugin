@@ -1,35 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace NavisworksPipePlugin
 {
     public partial class ParseSettingsForm : Form
     {
+        private string PropertyName => CategoriesBox.SelectedItem.ToString();
+        private string PropertyValue => NameBox.SelectedItem.ToString();
+
         private Point formPointBeforeMove;
         private bool isCheckCenterPoints = false;
-        private Image Highlighted;
-        private Image HighlightedReversed;
+        private readonly Image highlighted;
+        private readonly Image highlightedReversed;
 
         public ParseSettingsForm()
         {
             InitializeComponent();
-            Highlighted = StartEndPointButton.BackgroundImage;
-            HighlightedReversed = CenterPointButton.BackgroundImage;
+            highlighted = StartEndPointButton.BackgroundImage;
+            highlightedReversed = CenterPointButton.BackgroundImage;
             CenterPointButton.BackgroundImage = null;
+            CategoriesBox.SelectedIndex = 0;
             UpdateInfo();
         }
 
         public void UpdateInfo()
         {
             DefineUniquePropertiesToNameBox();
-            ChoosedElementsButton.Text = $"Выбранные элементы ({PipeParser.SelectedItems.Count})";
+            ChoosedElementsButton.Text = $"Выбранные элементы ({PipePlugin.SelectedItems.Count})";
         }
 
         private void LabelPanel_MouseMove(object sender, MouseEventArgs e)
@@ -38,7 +39,6 @@ namespace NavisworksPipePlugin
             {
                 Left += e.X - formPointBeforeMove.X;
                 Top += e.Y - formPointBeforeMove.Y;
-
             }
         }
 
@@ -52,44 +52,18 @@ namespace NavisworksPipePlugin
             Close();
         }
 
-        private void RenderButton_MouseClick(object sender, MouseEventArgs e)
+        private void OpenFileButton_MouseClick(object sender, MouseEventArgs e)
         {
-            var item = PipeParser.FirstSelectedItem;
-            if (item is null) return;
-            StringBuilder result = new StringBuilder();
-            var category = item.PropertyCategories.FindCategoryByName("LcOaNode");
-            foreach (var property in category.Properties)
-            {
-                result.Append("Name: " + property.Name)
-                    .Append("\n")
-                    .Append("Combined Name: " + property.CombinedName)
-                    .Append("\n")
-                    .Append("Display Name: " + property.DisplayName)
-                    .Append("\n\n");
-            }
-            MessageBox.Show(result.ToString());
+            System.Diagnostics.Process.Start("explorer.exe", Directory.GetCurrentDirectory());
         }
 
         private void ParseButton_MouseClick(object sender, MouseEventArgs e)
         {
-            if (ChoosedElementsButton.Checked)
-            {
-                if (PipeParser.SelectedItems.Count == 0)
-                {
-                    MessageBox.Show("Выберите хотя бы один элемент.", "Ошибка");
-                    return;
-                }
-                PipeParser.GetInfoFromModelItemCollection(PipeParser.SelectedItems, isCheckCenterPoints);
-            } else
-            {
-                if (PipeParser.AllItems.Count == 0)
-                {
-                    MessageBox.Show("Загрузите файл.", "Ошибка");
-                    return;
-                }
-                PipeParser.GetInfoFromModelItemCollection(PipeParser.AllItems.Descendants, isCheckCenterPoints);
-            }
-
+            ParseUtils.SetupParseInfo(
+                ChoosedElementsButton.Checked, 
+                isCheckCenterPoints, 
+                CategoriesBox.SelectedItem.ToString(), 
+                PropertyValue);
         }
 
         private void CenterPointButton_Click(object sender, EventArgs e)
@@ -100,7 +74,7 @@ namespace NavisworksPipePlugin
         private void ChooseCenterPoint()
         {
             StartEndPointButton.BackgroundImage = null;
-            CenterPointButton.BackgroundImage = HighlightedReversed;
+            CenterPointButton.BackgroundImage = highlightedReversed;
             isCheckCenterPoints = true;
         }
 
@@ -113,13 +87,12 @@ namespace NavisworksPipePlugin
         {
             isCheckCenterPoints = false;
             CenterPointButton.BackgroundImage = null;
-            StartEndPointButton.BackgroundImage = Highlighted;
+            StartEndPointButton.BackgroundImage = highlighted;
         }
 
         private void ChoosedElementsButton_CheckedChanged(object sender, EventArgs e)
         {
             FilterGroup.Visible = false;
-            ChoosedElementsButton.Text = $"Выбранные элементы ({PipeParser.SelectedItems.Count})";
         }
 
         private void FilterButton_CheckedChanged(object sender, EventArgs e)
@@ -127,73 +100,59 @@ namespace NavisworksPipePlugin
             FilterGroup.Visible = true;
         }
 
-        private void CategoriesBox_TextChanged(object sender, EventArgs e)
+        private void DefineUniquePropertiesToNameBox()
+        {
+            NameBox.Items.Clear();
+            if (PropertyName == "Все")
+            {
+                NameBox.Items.Add("Все элементы");
+                NameBox.SelectedIndex = 0;
+            } else
+            {
+                Dictionary<string, int> properties = ParseUtils.GetUniqueProperties(PropertyName);
+                if (properties.Count > 0)
+                {
+                    NameBox.Items.AddRange(properties.Keys.ToArray());
+                    NameBox.SelectedItem = properties.First().Key;
+                }
+            }
+            UpdatePropertyValueTooltip();
+            UpdateFilterMatchedItemsCount();
+        }
+
+        private void UpdateFilterMatchedItemsCount()
+        {
+            if (PropertyName == "Все")
+            {
+                FilterButton.Text = $"Фильтр ({PipePlugin.AllItems.DescendantsAndSelf.Count()})";
+                return;
+            }
+            int counter = 0;
+            foreach (var model in PipePlugin.AllItems.DescendantsAndSelf)
+            {
+                if (model.IsHidden) continue;
+                string value = ParseUtils.GetPropertStringValue(model, PropertyName);
+                if (value is null) continue;
+                if (value == PropertyValue)
+                    counter++;
+            }
+            FilterButton.Text = $"Фильтр ({counter})";
+        }
+
+        private void CategoriesBox_SelectionChangeCommitted(object sender, EventArgs e)
         {
             DefineUniquePropertiesToNameBox();
         }
 
-        private void DefineUniquePropertiesToNameBox()
+        private void NameBox_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            NameBox.Items.Clear();
-            Dictionary<string, int> properties = GetUniqueProperties();
-            if (properties.Count > 0)
-            {
-                NameBox.Items.AddRange(properties.Keys.ToArray());
-                NameBox.Text = properties.First().Key;
-            }
+            UpdatePropertyValueTooltip();
+            UpdateFilterMatchedItemsCount();
         }
 
-        private Dictionary<string, int> GetUniqueProperties()
+        private void UpdatePropertyValueTooltip()
         {
-            var allModels = PipeParser.AllItems.DescendantsAndSelf;
-            var properties = new Dictionary<string, int>();
-            foreach (var model in allModels)
-            {
-                var category = model.PropertyCategories.FindCategoryByName("LcOaNode");
-                if (category is null) continue;
-                var property = category.Properties.FindPropertyByName(DisplayNameToName(CategoriesBox.Text));
-                if (property is null) continue;
-                string value;
-                try
-                {
-                    value = property.Value.ToDisplayString();
-                }
-                catch
-                {
-                    value = property.Value.ToString();
-                }
-                if (properties.ContainsKey(value))
-                    properties[value]++;
-                else
-                    properties.Add(value, 1);
-            }
-
-            return properties;
-        }
-
-        private string DisplayNameToName(string displayName)
-        {
-            switch (displayName)
-            {
-                case "Имя":
-                    return "LcOaSceneBaseUserName";
-                case "Тип":
-                    return "LcOaSceneBaseClassUserName";
-                case "Внутренний тип":
-                    return "LcOaSceneBaseClassName";
-                case "GUID":
-                    return "LcOaNodeGUID";
-                case "Скрытый":
-                    return "LcOaNodeHidden";
-                case "Обязательный":
-                    return "LcOaNodeRequired";
-                case "Материал":
-                    return "LcOaNodeMaterial";
-                case "Файл источника":
-                    return "LcOaNodeSourceFile";
-                default:
-                    throw new ArgumentException($"Argument {displayName} not supported");
-            }
+            NameBoxTooltip.SetToolTip(NameBox, NameBox.Items[NameBox.SelectedIndex].ToString());
         }
     }
 }
