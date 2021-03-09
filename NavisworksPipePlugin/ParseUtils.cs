@@ -98,37 +98,35 @@ namespace NavisworksPipePlugin
             var pipeList = new List<PipeInfo>();
             foreach (ModelItem modelItem in collection)
             {
-                if (!modelItem.IsHidden)
+                BoundingBox3D box;
+                PipeInfo pipeInfo;
+                if (getCenterPoint)
                 {
-                    BoundingBox3D box;
-                    PipeInfo pipeInfo;
-                    if (getCenterPoint)
-                    {
-                        if (modelItem.Children.First is null) continue;
-                        box = modelItem.BoundingBox();
-                        pipeInfo = PipeInfoCentered.FromBoundingBox3D(box);
-                    }
-                    else
-                    {
-                        if (!modelItem.HasGeometry) continue;
-                        box = modelItem.Geometry?.BoundingBox;
-                        pipeInfo = PipeInfoStartEnd.FromBoundingBox3D(box);
-                    }
+                    if (modelItem.Children.First is null) continue;
+                    box = modelItem.BoundingBox();
+                    pipeInfo = PipeInfoCentered.FromBoundingBox3D(box);
+                }
+                else
+                {
+                    if (!modelItem.HasGeometry) continue;
+                    box = modelItem.Geometry?.BoundingBox;
+                    pipeInfo = PipeInfoStartEnd.FromBoundingBox3D(box);
+                }
 
-                    if (pipeInfo != null)
-                    {
-                        pipeInfo.ElementName = modelItem.DisplayName;
-                        pipeInfo.ParentNames = GetParentNames(modelItem);
-                        pipeList.Add(pipeInfo);
-                    }
+                if (pipeInfo != null)
+                {
+                    pipeInfo.ElementName = modelItem.DisplayName;
+                    pipeInfo.ParentNames = GetParentNames(modelItem);
+                    pipeList.Add(pipeInfo);
                 }
             }
             if (pipeList.Count == 0)
             {
-                MessageBox.Show("Ошибка парсинга. Попробуйте другие значения фильтра", "Ошибка");
+                MessageBox.Show("Ошибка парсинга. Попробуйте выбрать другие элементы или другие значения фильтра", "Внимание");
                 return;
             }
             WritePipeInfoToCSV(pipeList);
+            MessageBox.Show("Готово. Для просмотра файла нажмите \"Открыть папку\" и откройте файл \"PipeInfo.csv\"");
         }
 
         public static void WritePipeInfoToCSV(List<PipeInfo> pipesInfo)
