@@ -102,7 +102,6 @@ namespace NavisworksPipePlugin
                 PipeInfo pipeInfo;
                 if (getCenterPoint)
                 {
-                    if (modelItem.Children.First is null) continue;
                     box = modelItem.BoundingBox();
                     pipeInfo = PipeInfoCentered.FromBoundingBox3D(box);
                 }
